@@ -7,7 +7,7 @@ const palettes = [
   ['薄荷牛奶', '#D1EAE3', '#8EBDAE', '#598E82', '#E8F3EA', 'cup'],
   ['天空奶昔', '#D7E7F8', '#95B5D4', '#6486A7', '#EAF1F8', 'moon'],
   ['薰衣草奶霜', '#E6D9F5', '#B69CD4', '#8567A4', '#F1EBF9', 'flower'],
-  ['芋泥牛奶', '#E8DCE9', '#B8A1B8', '#89718A', '#F4EDF3', 'heart']
+  ['芋泥牛奶', '#E8DCE9', '#B8A1B8', '#89718A', '#F4EDF3', 'heart'],
 ];
 
 const ink = '#664D44';
@@ -17,7 +17,9 @@ let serial = 0;
 
 function paletteFor(theme) {
   const key = String(theme || '').toUpperCase();
-  return palettes.find(([name, hex]) => name === theme || hex === key) || palettes[0];
+  return (
+    palettes.find(([name, hex]) => name === theme || hex === key) || palettes[0]
+  );
 }
 
 const symbols = {
@@ -28,7 +30,7 @@ const symbols = {
   clover: `<path d="M0 1q-15 6-14-4 0-6 7-6-3-8 4-9Q3-20 4-10q10-6 13 1Q20 0 7 1q9 4 5 10-5 6-11-5-2 6-8 11" fill="#A7C191" transform="scale(.85)"/>`,
   cup: `<path d="M8-4h4q6 0 3 6-2 3-6 2" fill="#FFF3CE"/><path d="M-12-5H10L8 5Q5 13-4 10q-7-1-8-15Z" fill="#B4D2BB"/><path d="M-15 12Q0 15 14 11M-4-9q-3-4 1-7M2-10q-2-3 1-5" fill="none"/>`,
   moon: `<path d="M5-13C-13-17-21 5-6 13q12 6 20-7C1 11-9-2 5-13Z" fill="#ECC879"/><path d="m10-10 1.2 3.3L15-5.5l-3.8 1.2L10-1 8.7-4.3 5-5.5l3.7-1.2Z" fill="#EDC887" stroke-width="1"/>`,
-  flower: `<g fill="#CFABD0"><ellipse cy="-7" rx="5.8" ry="8"/><ellipse cy="-7" rx="5.8" ry="8" transform="rotate(72)"/><ellipse cy="-7" rx="5.8" ry="8" transform="rotate(144)"/><ellipse cy="-7" rx="5.8" ry="8" transform="rotate(216)"/><ellipse cy="-7" rx="5.8" ry="8" transform="rotate(288)"/></g><circle r="4" fill="#F2CD82"/>`
+  flower: `<g fill="#CFABD0"><ellipse cy="-7" rx="5.8" ry="8"/><ellipse cy="-7" rx="5.8" ry="8" transform="rotate(72)"/><ellipse cy="-7" rx="5.8" ry="8" transform="rotate(144)"/><ellipse cy="-7" rx="5.8" ry="8" transform="rotate(216)"/><ellipse cy="-7" rx="5.8" ry="8" transform="rotate(288)"/></g><circle r="4" fill="#F2CD82"/>`,
 };
 
 function icon(key, x, y, scale = 1) {
@@ -40,16 +42,24 @@ function twinkle(x, y, r, color = gold) {
 }
 
 function dots(coords, color, r) {
-  return coords.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}"/>`).join('');
+  return coords
+    .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}"/>`)
+    .join('');
 }
 
 function cabinet(p, id) {
   const [, shell, flank, trim, , emblem] = p;
-  const reelSymbols = [emblem, emblem === 'star' ? 'moon' : 'star', emblem === 'heart' ? 'cherries' : 'heart'];
-  const reels = reelSymbols.map((symbol, i) => {
-    const x = 49 + i * 46;
-    return `<rect x="${x}" y="97" width="42" height="57" rx="7" fill="url(#${id}-reel)" stroke="#A68D73" stroke-width="1.5"/><path d="M${x + 5} 103h32m-32 46h32" stroke="#E4D8BC" stroke-width="1"/>${icon(symbol, x + 21, 126, 1.03)}`;
-  }).join('');
+  const reelSymbols = [
+    emblem,
+    emblem === 'star' ? 'moon' : 'star',
+    emblem === 'heart' ? 'cherries' : 'heart',
+  ];
+  const reels = reelSymbols
+    .map((symbol, i) => {
+      const x = 49 + i * 46;
+      return `<rect x="${x}" y="97" width="42" height="57" rx="7" fill="url(#${id}-reel)" stroke="#A68D73" stroke-width="1.5"/><path d="M${x + 5} 103h32m-32 46h32" stroke="#E4D8BC" stroke-width="1"/>${icon(symbol, x + 21, 126, 1.03)}`;
+    })
+    .join('');
   return `<g stroke="${ink}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <g transform="rotate(-2 110 130)">
     <path d="m185 135 16-6 3 20-17 5Z" fill="${trim}"/><ellipse cx="198" cy="138" rx="8" ry="11" fill="${flank}"/>
@@ -61,14 +71,22 @@ function cabinet(p, id) {
     <path d="M31 74q-4-4-1-12l6-17q4-11 13-13l30-4q15-15 31-16 20-1 35 12l24 1q11 0 15 7l7 17q4 10-1 14l-4 3-148 12Z" fill="${flank}"/>
     <path d="M29 66q1-4 6-18 4-12 15-14l29-4q15-15 32-15 19-1 34 12l24 1q10 0 13 7l6 15q3 8-2 10l-151 13q-7 1-6-7Z" fill="${shell}"/>
     <path d="m42 62 5-15q2-3 7-4l30-4q13-13 28-13 14-1 27 10l28 1q5 0 7 4l3 10Z" fill="${cream}" stroke="${trim}" stroke-width="1.4"/>
-    <g transform="rotate(-4 108 46)">${twinkle(86, 49, 4, flank)}${icon(emblem, 110, 44, .7)}${twinkle(135, 46, 4, flank)}</g>
+    <g transform="rotate(-4 108 46)">${twinkle(86, 49, 4, flank)}${icon(emblem, 110, 44, 0.7)}${twinkle(135, 46, 4, flank)}</g>
     <g transform="skewY(-4)">
       <rect x="37" y="90" width="150" height="72" rx="13" fill="${flank}"/>
       <rect x="42" y="93" width="144" height="65" rx="10" fill="#8C7467"/>
       ${reels}
       <path d="m38 121 4 3-4 3m145-6-4 3 4 3" stroke="none" fill="${cream}"/>
       <path d="M39 170h142" stroke="${trim}" stroke-width="1.2"/>
-      ${dots([[51, 177], [59, 177], [67, 177]], trim, 1.3)}
+      ${dots(
+        [
+          [51, 177],
+          [59, 177],
+          [67, 177],
+        ],
+        trim,
+        1.3,
+      )}
       <rect x="142" y="173" width="28" height="5" rx="2" fill="${trim}" stroke-width="1"/>
       <path d="M35 185h154l10 17q2 4-4 6H28q-5-1-3-6Z" fill="${shell}"/>
       <path d="M25 206h171v12q-1 6-7 6H31q-7 0-7-6Z" fill="${flank}"/>
@@ -104,15 +122,26 @@ export function machineArt(theme, variant = 'card') {
     <linearGradient id="${id}-reel" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#DFD3B5"/><stop offset=".19" stop-color="#FFF8E9"/><stop offset=".49" stop-color="#FFFDF2"/><stop offset=".81" stop-color="#FBF5E5"/><stop offset="1" stop-color="#DCD0B6"/></linearGradient>
     <pattern id="${id}-paper" width="13" height="13" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r=".7" fill="${flank}" opacity=".28"/></pattern>
   </defs>`;
-  const body = hero ? `
+  const body = hero
+    ? `
     <ellipse cx="222" cy="226" rx="134" ry="10" fill="#B99886" opacity=".17"/>
-    ${ticket(110, 190, -27, .88, '#F6D69C')}${ticket(98, 203, -16, .81, cream)}
+    ${ticket(110, 190, -27, 0.88, '#F6D69C')}${ticket(98, 203, -16, 0.81, cream)}
     ${twinkle(101, 72, 13)}${twinkle(82, 86, 5, shell)}${twinkle(325, 35, 8, shell)}
     ${twinkle(340, 160, 10)}${twinkle(357, 150, 4, shell)}
-    ${dots([[120, 44], [352, 178], [87, 144], [296, 24]], flank, 2)}
+    ${dots(
+      [
+        [120, 44],
+        [352, 178],
+        [87, 144],
+        [296, 24],
+      ],
+      flank,
+      2,
+    )}
     <g transform="translate(96 -5) rotate(5 120 140) scale(1.03)">${cabinet(p, id)}</g>
-    ${ticket(302, 219, 10, .66, '#F4DDB0')}
-  ` : `
+    ${ticket(302, 219, 10, 0.66, '#F4DDB0')}
+  `
+    : `
     <rect width="240" height="300" fill="${background}"/>
     <rect width="240" height="300" fill="url(#${id}-paper)"/>
     <path d="M-12 261Q111 244 251 254v48H-12Z" fill="${shell}" opacity=".54"/>
